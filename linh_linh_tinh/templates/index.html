@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chia Sẻ Liên Kết</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .header {
+            margin-bottom: 30px;
+        }
+        .table {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header text-center">
+        <h1>Link linh tinh</h1>
+        <p class="lead">Thêm và chia sẻ</p>
+    </div>
+    <form id="linkForm" class="mb-4">
+        <div class="form-group">
+            <label for="linkTitle">Tiêu Đề Liên Kết:</label>
+            <input type="text" class="form-control" id="linkTitle" required placeholder="Nhập tiêu đề liên kết">
+        </div>
+        <div class="form-group">
+            <label for="linkUrl">URL Liên Kết:</label>
+            <input type="url" class="form-control" id="linkUrl" required placeholder="Nhập URL liên kết">
+        </div>
+        <button type="submit" class="btn btn-success btn-block">Thêm Liên Kết</button>
+    </form>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Tiêu Đề</th>
+                <th scope="col">URL</th>
+                <th scope="col">Hành Động</th>
+            </tr>
+        </thead>
+        <tbody id="linkList">
+            {% for link in links %}
+            <tr>
+                <td>{{ link.title }}</td>
+                <td><a href="{{ link.url }}" target="_blank">{{ link.url }}</a></td>
+                <td><a href="{{ link.url }}" class="btn btn-primary" target="_blank">Truy cập</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Handle form submission
+    document.getElementById('linkForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const title = document.getElementById('linkTitle').value;
+        const url = document.getElementById('linkUrl').value;
+
+        // Send link to the server
+        fetch('/links', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ title, url })
+        })
+        .then(response => {
+            if (response.ok) {
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>${title}</td>
+                    <td><a href="${url}" target="_blank">${url}</a></td>
+                    <td><a href="${url}" class="btn btn-primary" target="_blank">Truy cập</a></td>
+                `;
+                document.getElementById('linkList').appendChild(newRow);
+                document.getElementById('linkForm').reset();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
