@@ -3,118 +3,383 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chia Sẻ Liên Kết</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Nhật Ký Cá Nhân</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             padding: 20px;
-            background-color: #f8f9fa;
         }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
         .header {
-            margin-bottom: 30px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
         }
-        .table {
-            margin-top: 20px;
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .diary-form {
+            padding: 30px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .diary-entries {
+            padding: 30px;
+        }
+
+        .diary-entries h2 {
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        .entry {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4facfe;
+            transition: transform 0.2s;
+        }
+
+        .entry:hover {
+            transform: translateX(5px);
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .entry-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .entry-date {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .entry-content {
+            color: #555;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .delete-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .delete-btn:hover {
+            background: #ff3742;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .no-entries {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-style: italic;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .diary-form,
+            .diary-entries {
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
-
-<!-- Navigation Bar with Logo -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">
-        <img src="1.jpg" width="30" height="30" class="d-inline-block align-top" alt="Logo">
-        Chia Sẻ Liên Kếtt
-    </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Trang Chủ <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Liên Kết</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Liên Hệ</a>
-            </li>
-        </ul>
-    </div>
-</nav>
-
-<div class="container">
-    <div class="header text-center">
-        <h1>Link linh tinh</h1>
-        <p class="lead">Thêm và chia sẻ</p>
-    </div>
-    <form id="linkForm" class="mb-4">
-        <div class="form-group">
-            <label for="linkTitle">Tiêu Đề Liên Kết:</label>
-            <input type="text" class="form-control" id="linkTitle" required placeholder="Nhập tiêu đề liên kết">
+    <div class="container">
+        <div class="header">
+            <h1>📖 Nhật Ký Cá Nhân</h1>
+            <p>Ghi lại những khoảnh khắc đáng nhớ trong cuộc sống</p>
         </div>
-        <div class="form-group">
-            <label for="linkUrl">URL Liên Kết:</label>
-            <input type="url" class="form-control" id="linkUrl" required placeholder="Nhập URL liên kết">
+
+        <div class="diary-form">
+            <form id="diaryForm">
+                <div class="form-group">
+                    <label for="entryTitle">Tiêu đề:</label>
+                    <input type="text" id="entryTitle" placeholder="Nhập tiêu đề cho nhật ký..." required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="entryContent">Nội dung:</label>
+                    <textarea id="entryContent" placeholder="Chia sẻ những suy nghĩ, cảm xúc của bạn..." required></textarea>
+                </div>
+                
+                <button type="submit" class="btn" id="submitBtn">
+                    ✍️ Lưu Nhật Ký
+                </button>
+            </form>
         </div>
-        <button type="submit" class="btn btn-success btn-block">Thêm Liên Kết</button>
-    </form>
 
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col">Tiêu Đề</th>
-                <th scope="col">URL</th>
-                <th scope="col">Hành Động</th>
-            </tr>
-        </thead>
-        <tbody id="linkList">
-            {% for link in links %}
-            <tr>
-                <td>{{ link.title }}</td>
-                <td><a href="{{ link.url }}" target="_blank">{{ link.url }}</a></td>
-                <td><a href="{{ link.url }}" class="btn btn-primary" target="_blank">Truy cập</a></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+        <div class="diary-entries">
+            <h2>📚 Các Mục Nhật Ký</h2>
+            <div id="entriesContainer">
+                <div class="loading">Đang tải nhật ký...</div>
+            </div>
+        </div>
+    </div>
 
-<script>
-    // Handle form submission
-    document.getElementById('linkForm').addEventListener('submit', function(event) {
-        event.preventDefault();
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            getDocs, 
+            deleteDoc, 
+            doc, 
+            orderBy, 
+            query,
+            serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-        const title = document.getElementById('linkTitle').value;
-        const url = document.getElementById('linkUrl').value;
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCkwTQkLdEquJ1NU1s4XoM8xDQHafvgORI",
+            authDomain: "link-linh-tinh-29774.firebaseapp.com",
+            projectId: "link-linh-tinh-29774",
+            storageBucket: "link-linh-tinh-29774.firebasestorage.app",
+            messagingSenderId: "503524011845",
+            appId: "1:503524011845:web:050cb3f9dc39f368c1d82c",
+            measurementId: "G-Z78JG785NC"
+        };
 
-        // Send link to the server
-        fetch('/links', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ title, url })
-        })
-        .then(response => {
-            if (response.ok) {
-                const newRow = document.createElement('tr');
-                newRow.innerHTML = `
-                    <td>${title}</td>
-                    <td><a href="${url}" target="_blank">${url}</a></td>
-                    <td><a href="${url}" class="btn btn-primary" target="_blank">Truy cập</a></td>
-                `;
-                document.getElementById('linkList').appendChild(newRow);
-                document.getElementById('linkForm').reset();
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+
+        // DOM elements
+        const diaryForm = document.getElementById('diaryForm');
+        const entryTitle = document.getElementById('entryTitle');
+        const entryContent = document.getElementById('entryContent');
+        const submitBtn = document.getElementById('submitBtn');
+        const entriesContainer = document.getElementById('entriesContainer');
+
+        // Add diary entry
+        async function addDiaryEntry(title, content) {
+            try {
+                submitBtn.disabled = true;
+                submitBtn.textContent = '⏳ Đang lưu...';
+
+                await addDoc(collection(db, 'diary-entries'), {
+                    title: title,
+                    content: content,
+                    createdAt: serverTimestamp()
+                });
+
+                // Clear form
+                entryTitle.value = '';
+                entryContent.value = '';
+                
+                // Reload entries
+                loadDiaryEntries();
+                
+                alert('✅ Đã lưu nhật ký thành công!');
+            } catch (error) {
+                console.error('Error adding diary entry:', error);
+                alert('❌ Có lỗi xảy ra khi lưu nhật ký!');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '✍️ Lưu Nhật Ký';
+            }
+        }
+
+        // Load diary entries
+        async function loadDiaryEntries() {
+            try {
+                entriesContainer.innerHTML = '<div class="loading">Đang tải nhật ký...</div>';
+                
+                const q = query(collection(db, 'diary-entries'), orderBy('createdAt', 'desc'));
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    entriesContainer.innerHTML = '<div class="no-entries">Chưa có nhật ký nào. Hãy viết nhật ký đầu tiên của bạn! 📝</div>';
+                    return;
+                }
+
+                let entriesHTML = '';
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const date = data.createdAt ? data.createdAt.toDate() : new Date();
+                    const formattedDate = date.toLocaleString('vi-VN', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    entriesHTML += `
+                        <div class="entry">
+                            <div class="entry-header">
+                                <div class="entry-title">${escapeHtml(data.title)}</div>
+                                <div>
+                                    <span class="entry-date">${formattedDate}</span>
+                                    <button class="delete-btn" onclick="deleteDiaryEntry('${doc.id}')">🗑️ Xóa</button>
+                                </div>
+                            </div>
+                            <div class="entry-content">${escapeHtml(data.content)}</div>
+                        </div>
+                    `;
+                });
+
+                entriesContainer.innerHTML = entriesHTML;
+            } catch (error) {
+                console.error('Error loading diary entries:', error);
+                entriesContainer.innerHTML = '<div class="no-entries">❌ Có lỗi xảy ra khi tải nhật ký!</div>';
+            }
+        }
+
+        // Delete diary entry
+        window.deleteDiaryEntry = async function(entryId) {
+            if (confirm('Bạn có chắc chắn muốn xóa nhật ký này không?')) {
+                try {
+                    await deleteDoc(doc(db, 'diary-entries', entryId));
+                    loadDiaryEntries();
+                    alert('✅ Đã xóa nhật ký thành công!');
+                } catch (error) {
+                    console.error('Error deleting diary entry:', error);
+                    alert('❌ Có lỗi xảy ra khi xóa nhật ký!');
+                }
+            }
+        };
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Form submit handler
+        diaryForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = entryTitle.value.trim();
+            const content = entryContent.value.trim();
+            
+            if (title && content) {
+                addDiaryEntry(title, content);
             }
         });
-    });
-</script>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
+        // Load entries when page loads
+        loadDiaryEntries();
+    </script>
 </body>
 </html>
