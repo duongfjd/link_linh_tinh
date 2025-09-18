@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nhật Ký Cá Nhân</title>
+    <title>Thông tin</title>
     <style>
         * {
             margin: 0;
@@ -202,32 +202,32 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📖 Nhật Ký Cá Nhân</h1>
-            <p>Ghi lại những khoảnh khắc đáng nhớ trong cuộc sống</p>
+            <h1>📖 thông tin</h1>
+            <p>thông tin </p>
         </div>
 
         <div class="diary-form">
             <form id="diaryForm">
                 <div class="form-group">
                     <label for="entryTitle">Tiêu đề:</label>
-                    <input type="text" id="entryTitle" placeholder="Nhập tiêu đề cho nhật ký..." required>
+                    <input type="text" id="entryTitle" placeholder="Nhập tiêu đề..." required>
                 </div>
                 
                 <div class="form-group">
                     <label for="entryContent">Nội dung:</label>
-                    <textarea id="entryContent" placeholder="Chia sẻ những suy nghĩ, cảm xúc của bạn..." required></textarea>
+                    <textarea id="entryContent" placeholder="thông tinn..." required></textarea>
                 </div>
                 
                 <button type="submit" class="btn" id="submitBtn">
-                    ✍️ Lưu Nhật Ký
+                    ✍️ Lưu 
                 </button>
             </form>
         </div>
 
         <div class="diary-entries">
-            <h2>📚 Các Mục Nhật Ký</h2>
+            <h2>📚 Các Mục</h2>
             <div id="entriesContainer">
-                <div class="loading">Đang tải nhật ký...</div>
+                <div class="loading">Đang tải ...</div>
             </div>
         </div>
     </div>
@@ -291,26 +291,26 @@
                 entryTitle.value = '';
                 entryContent.value = '';
                 
-                alert('✅ Đã lưu nhật ký thành công!');
+                alert('✅ Đã lưu  thành công!');
             } catch (error) {
                 console.error('Error adding diary entry:', error);
-                alert('❌ Có lỗi xảy ra khi lưu nhật ký!');
+                alert('❌ Có lỗi xảy ra khi lưu!');
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = '✍️ Lưu Nhật Ký';
+                submitBtn.textContent = '✍️ Lưu ';
             }
         }
 
         // Load diary entries
         function loadDiaryEntries() {
             try {
-                entriesContainer.innerHTML = '<div class="loading">Đang tải nhật ký...</div>';
+                entriesContainer.innerHTML = '<div class="loading">Đang tải ...</div>';
                 
                 const entriesRef = ref(database, 'diary-entries');
                 
                 onValue(entriesRef, (snapshot) => {
                     if (!snapshot.exists()) {
-                        entriesContainer.innerHTML = '<div class="no-entries">Chưa có nhật ký nào. Hãy viết nhật ký đầu tiên của bạn! 📝</div>';
+                        entriesContainer.innerHTML = '<div class="no-entries">Chưa có  nào. Hãy viết  đầu tiên của bạn! 📝</div>';
                         return;
                     }
 
@@ -354,24 +354,24 @@
                     entriesContainer.innerHTML = entriesHTML;
                 }, (error) => {
                     console.error('Error loading diary entries:', error);
-                    entriesContainer.innerHTML = '<div class="no-entries">❌ Có lỗi xảy ra khi tải nhật ký!</div>';
+                    entriesContainer.innerHTML = '<div class="no-entries">❌ Có lỗi xảy ra khi tải !</div>';
                 });
             } catch (error) {
                 console.error('Error setting up listener:', error);
-                entriesContainer.innerHTML = '<div class="no-entries">❌ Có lỗi xảy ra khi tải nhật ký!</div>';
+                entriesContainer.innerHTML = '<div class="no-entries">❌ Có lỗi xảy ra khi tải !</div>';
             }
         }
 
         // Delete diary entry
         window.deleteDiaryEntry = async function(entryId) {
-            if (confirm('Bạn có chắc chắn muốn xóa nhật ký này không?')) {
+            if (confirm('Bạn có chắc chắn muốn xóa  này không?')) {
                 try {
                     const entryRef = ref(database, `diary-entries/${entryId}`);
                     await remove(entryRef);
-                    alert('✅ Đã xóa nhật ký thành công!');
+                    alert('✅ Đã xóa  thành công!');
                 } catch (error) {
                     console.error('Error deleting diary entry:', error);
-                    alert('❌ Có lỗi xảy ra khi xóa nhật ký!');
+                    alert('❌ Có lỗi xảy ra khi xóa !');
                 }
             }
         };
