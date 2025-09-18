@@ -237,21 +237,22 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js";
         import { 
-            getFirestore, 
-            collection, 
-            addDoc, 
-            getDocs, 
-            deleteDoc, 
-            doc, 
-            orderBy, 
-            query,
-            serverTimestamp 
-        } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+            getDatabase, 
+            ref, 
+            push, 
+            set,
+            onValue,
+            remove,
+            serverTimestamp,
+            orderByChild,
+            query
+        } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCkwTQkLdEquJ1NU1s4XoM8xDQHafvgORI",
             authDomain: "link-linh-tinh-29774.firebaseapp.com",
+            databaseURL: "https://link-linh-tinh-29774-default-rtdb.asia-southeast1.firebasedatabase.app/",
             projectId: "link-linh-tinh-29774",
             storageBucket: "link-linh-tinh-29774.firebasestorage.app",
             messagingSenderId: "503524011845",
@@ -262,7 +263,7 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
-        const db = getFirestore(app);
+        const database = getDatabase(app);
 
         // DOM elements
         const diaryForm = document.getElementById('diaryForm');
@@ -277,7 +278,10 @@
                 submitBtn.disabled = true;
                 submitBtn.textContent = '⏳ Đang lưu...';
 
-                await addDoc(collection(db, 'diary-entries'), {
+                const entriesRef = ref(database, 'diary-entries');
+                const newEntryRef = push(entriesRef);
+                
+                await set(newEntryRef, {
                     title: title,
                     content: content,
                     createdAt: serverTimestamp()
@@ -286,9 +290,6 @@
                 // Clear form
                 entryTitle.value = '';
                 entryContent.value = '';
-                
-                // Reload entries
-                loadDiaryEntries();
                 
                 alert('✅ Đã lưu nhật ký thành công!');
             } catch (error) {
@@ -301,47 +302,62 @@
         }
 
         // Load diary entries
-        async function loadDiaryEntries() {
+        function loadDiaryEntries() {
             try {
                 entriesContainer.innerHTML = '<div class="loading">Đang tải nhật ký...</div>';
                 
-                const q = query(collection(db, 'diary-entries'), orderBy('createdAt', 'desc'));
-                const querySnapshot = await getDocs(q);
+                const entriesRef = ref(database, 'diary-entries');
                 
-                if (querySnapshot.empty) {
-                    entriesContainer.innerHTML = '<div class="no-entries">Chưa có nhật ký nào. Hãy viết nhật ký đầu tiên của bạn! 📝</div>';
-                    return;
-                }
+                onValue(entriesRef, (snapshot) => {
+                    if (!snapshot.exists()) {
+                        entriesContainer.innerHTML = '<div class="no-entries">Chưa có nhật ký nào. Hãy viết nhật ký đầu tiên của bạn! 📝</div>';
+                        return;
+                    }
 
-                let entriesHTML = '';
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const date = data.createdAt ? data.createdAt.toDate() : new Date();
-                    const formattedDate = date.toLocaleString('vi-VN', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
+                    const entries = [];
+                    snapshot.forEach((childSnapshot) => {
+                        const data = childSnapshot.val();
+                        entries.push({
+                            id: childSnapshot.key,
+                            ...data
+                        });
                     });
 
-                    entriesHTML += `
-                        <div class="entry">
-                            <div class="entry-header">
-                                <div class="entry-title">${escapeHtml(data.title)}</div>
-                                <div>
-                                    <span class="entry-date">${formattedDate}</span>
-                                    <button class="delete-btn" onclick="deleteDiaryEntry('${doc.id}')">🗑️ Xóa</button>
-                                </div>
-                            </div>
-                            <div class="entry-content">${escapeHtml(data.content)}</div>
-                        </div>
-                    `;
-                });
+                    // Sort by createdAt descending
+                    entries.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
-                entriesContainer.innerHTML = entriesHTML;
+                    let entriesHTML = '';
+                    entries.forEach((entry) => {
+                        const date = entry.createdAt ? new Date(entry.createdAt) : new Date();
+                        const formattedDate = date.toLocaleString('vi-VN', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+
+                        entriesHTML += `
+                            <div class="entry">
+                                <div class="entry-header">
+                                    <div class="entry-title">${escapeHtml(entry.title)}</div>
+                                    <div>
+                                        <span class="entry-date">${formattedDate}</span>
+                                        <button class="delete-btn" onclick="deleteDiaryEntry('${entry.id}')">🗑️ Xóa</button>
+                                    </div>
+                                </div>
+                                <div class="entry-content">${escapeHtml(entry.content)}</div>
+                            </div>
+                        `;
+                    });
+
+                    entriesContainer.innerHTML = entriesHTML;
+                }, (error) => {
+                    console.error('Error loading diary entries:', error);
+                    entriesContainer.innerHTML = '<div class="no-entries">❌ Có lỗi xảy ra khi tải nhật ký!</div>';
+                });
             } catch (error) {
-                console.error('Error loading diary entries:', error);
+                console.error('Error setting up listener:', error);
                 entriesContainer.innerHTML = '<div class="no-entries">❌ Có lỗi xảy ra khi tải nhật ký!</div>';
             }
         }
@@ -350,8 +366,8 @@
         window.deleteDiaryEntry = async function(entryId) {
             if (confirm('Bạn có chắc chắn muốn xóa nhật ký này không?')) {
                 try {
-                    await deleteDoc(doc(db, 'diary-entries', entryId));
-                    loadDiaryEntries();
+                    const entryRef = ref(database, `diary-entries/${entryId}`);
+                    await remove(entryRef);
                     alert('✅ Đã xóa nhật ký thành công!');
                 } catch (error) {
                     console.error('Error deleting diary entry:', error);
